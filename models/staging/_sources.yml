@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: raw_paid_media
+    description: >
+      Raw, untransformed paid-media data as it would land from an ELT tool
+      (Fivetran/Airbyte). In Phase 0 it is produced by /data-gen and loaded into
+      the `raw_paid_media` BigQuery dataset. All tables carry `workspace_id` = 1
+      (single tenant — HARD RULE #5).
+    database: "{{ target.project }}"
+    schema: raw_paid_media
+    tables:
+      # Meta Ads
+      - name: meta_ads_campaigns
+      - name: meta_ads_adsets
+      - name: meta_ads_ads
+      - name: meta_ads_ad_insights
+        description: Daily ad-level performance (impressions, clicks, spend, conversions).
+      # Google Ads
+      - name: google_ads_campaigns
+      - name: google_ads_ad_groups
+      - name: google_ads_ads
+      - name: google_ads_ad_performance_report
+        description: Daily ad-level performance; cost is in micros.
+      # GA4
+      - name: ga4_events
+        description: GA4-style event stream (event_date is a 'YYYYMMDD' string).
+      - name: ga4_sessions
+        description: Session-grain rollup derived from events (synthetic convenience).
+      # CRM
+      - name: crm_contacts
+      - name: crm_deals

@@ -1,0 +1,33 @@
+# Template only — NEVER commit a real profiles.yml (it is gitignored).
+# Copy to ~/.dbt/profiles.yml and adjust, OR keep it here and run dbt with
+#   DBT_PROFILES_DIR=$(pwd) dbt debug
+#
+# Two auth methods are shown. For local dev we use `oauth`, which reuses your
+# gcloud Application Default Credentials (run `gcloud auth application-default
+# login` once). The data plane (Cloud Run) will use a service-account keyfile
+# from Secret Manager instead — see ADR 0003/0004.
+
+pipeforge:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth # uses gcloud Application Default Credentials
+      project: "{{ env_var('GCP_PROJECT', 'pipeforge-dev') }}"
+      # Default dataset; per-layer datasets are set in dbt_project.yml.
+      dataset: staging
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 4
+      priority: interactive
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+
+    # Alternative — service account keyfile (used in the data plane):
+    # dev_sa:
+    #   type: bigquery
+    #   method: service-account
+    #   keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+    #   project: "{{ env_var('GCP_PROJECT', 'pipeforge-dev') }}"
+    #   dataset: staging
+    #   location: "{{ env_var('BQ_LOCATION', 'US') }}"
+    #   threads: 4

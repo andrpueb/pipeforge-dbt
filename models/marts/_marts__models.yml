@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: mart_paid_media__basic
+    description: >
+      Cross-channel daily paid-media performance (Meta + Google) enriched with
+      GA4 session context, at (workspace, day, channel, campaign) grain.
+    columns:
+      - name: paid_media_key
+        description: Natural-key surrogate; the model's primary key.
+        tests:
+          - not_null
+          - unique
+      - name: workspace_id
+        tests:
+          - not_null
+      - name: activity_date
+        tests:
+          - not_null
+      - name: channel
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["meta", "google"]
